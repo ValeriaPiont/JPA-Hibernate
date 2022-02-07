@@ -1,8 +1,12 @@
 package com.bobocode.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
+import javax.persistence.metamodel.IdentifiableType;
 
 /**
  * todo:
@@ -20,9 +24,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
+@Entity
+@Table(name = "employee_profile")
 public class EmployeeProfile {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JoinColumn(name = "employee_id")
+    @OneToOne
     private Employee employee;
+
+    @Column(nullable = false)
     private String position;
+
+    @Column(nullable = false)
     private String department;
 }
