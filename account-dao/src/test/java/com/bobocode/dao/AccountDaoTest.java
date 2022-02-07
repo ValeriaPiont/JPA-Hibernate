@@ -2,6 +2,7 @@ package com.bobocode.dao;
 
 import com.bobocode.exception.AccountDaoException;
 import com.bobocode.model.Account;
+import com.bobocode.model.Gender;
 import com.bobocode.util.TestDataGenerator;
 import org.hibernate.Session;
 import org.junit.jupiter.api.AfterAll;
@@ -17,7 +18,10 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.everyItem;
@@ -34,7 +38,7 @@ class AccountDaoTest {
 
     @BeforeAll
     static void init() {
-        emf = Persistence.createEntityManagerFactory("SingleAccountEntityH2");
+        emf = Persistence.createEntityManagerFactory("SingleAccountEntityPostgres");
         accountDao = new AccountDaoImpl(emf);
     }
 
@@ -43,16 +47,31 @@ class AccountDaoTest {
         emf.close();
     }
 
+    Account generateAccount(){
+        Account account = new Account();
+        account.setFirstName("person.getFirstName()");
+        account.setLastName("person.getLastName()");
+        account.setEmail("person.getEmail()");
+        account.setBirthday(LocalDate.of(
+                2002,
+                3,
+                5));
+        account.setGender(Gender.FEMALE);
+        BigDecimal balance = BigDecimal.valueOf(new Random().nextInt(200_000),2);
+        account.setBalance(balance);
+        account.setCreationTime(LocalDateTime.now());
+        return account;
+    }
+
     @Test
     void testSaveAccount() {
-        Account account = TestDataGenerator.generateAccount();
+        Account account = generateAccount();
 
         accountDao.save(account);
         boolean saved = isSaved(account);
 
         assertThat(account.getId(), notNullValue());
         assertThat(saved, is(true));
-
     }
 
     private void saveTestAccount(Account account) {
@@ -90,7 +109,8 @@ class AccountDaoTest {
 
     @Test
     void testFindAccountById() {
-        Account account = TestDataGenerator.generateAccount();
+        //Account account = TestDataGenerator.generateAccount();
+        Account account = generateAccount();
         saveTestAccount(account);
 
         Account foundAccount = accountDao.findById(account.getId());
@@ -100,7 +120,7 @@ class AccountDaoTest {
 
     @Test
     void testFindAccountByEmail() {
-        Account account = TestDataGenerator.generateAccount();
+        Account account = generateAccount();
         saveTestAccount(account);
 
         Account foundAccount = accountDao.findByEmail(account.getEmail());
@@ -110,7 +130,8 @@ class AccountDaoTest {
 
     @Test
     void testFindAllAccounts() {
-        List<Account> accounts = TestDataGenerator.generateAccountList(3);
+        //List<Account> accounts = TestDataGenerator.generateAccountList(3);
+        List<Account> accounts = List.of(generateAccount(), generateAccount(), generateAccount());
         accounts.forEach(this::saveTestAccount);
 
         List<Account> foundAccounts = accountDao.findAll();
@@ -120,7 +141,8 @@ class AccountDaoTest {
 
     @Test
     void testUpdateAccount() {
-        Account account = TestDataGenerator.generateAccount();
+       // Account account = TestDataGenerator.generateAccount();
+        Account account = generateAccount();
         saveTestAccount(account);
 
         account.setBalance(account.getBalance().add(BigDecimal.valueOf(1000).setScale(2, RoundingMode.HALF_UP)));
@@ -146,9 +168,10 @@ class AccountDaoTest {
 
     @Test
     void testRemoveAccount() {
-        Account account = TestDataGenerator.generateAccount();
-        saveTestAccount(account);
+        //Account account = TestDataGenerator.generateAccount();
+        Account account = generateAccount();
 
+        saveTestAccount(account);
         accountDao.remove(account);
         boolean saved = isSaved(account);
 
@@ -158,7 +181,7 @@ class AccountDaoTest {
     @Test
     void testSaveInvalidAccount() {
         try {
-            Account invalidAccount = TestDataGenerator.generateAccount();
+            Account invalidAccount = generateAccount();
             invalidAccount.setEmail(null);
             accountDao.save(invalidAccount);
             fail("AccountDaoException should be thrown");
@@ -170,7 +193,7 @@ class AccountDaoTest {
     @Test
     void testUpdateInvalidAccount() {
         try {
-            Account account = TestDataGenerator.generateAccount();
+            Account account = generateAccount();
             saveTestAccount(account);
 
             account.setFirstName(null);
