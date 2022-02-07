@@ -2,6 +2,7 @@ package com.bobocode;
 
 import com.bobocode.exception.QueryHelperException;
 import com.bobocode.model.Account;
+import com.bobocode.model.Gender;
 import com.bobocode.util.EntityManagerUtil;
 import com.bobocode.util.TestDataGenerator;
 import org.junit.jupiter.api.AfterAll;
@@ -10,6 +11,11 @@ import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Random;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -31,6 +37,22 @@ public class QueryHelperTest {
     @AfterAll
     static void destroy() {
         entityManagerFactory.close();
+    }
+
+    Account generateAccount(){
+        Account account = new Account();
+        account.setFirstName("person.getFirstName()");
+        account.setLastName("person.getLastName()");
+        account.setEmail("person.getEmail()");
+        account.setBirthday(LocalDate.of(
+                2002,
+                3,
+                5));
+        account.setGender(Gender.FEMALE);
+        BigDecimal balance = BigDecimal.valueOf(new Random().nextInt(200_000),2);
+        account.setBalance(balance);
+        account.setCreationTime(LocalDateTime.now());
+        return account;
     }
 
     @Test
@@ -56,7 +78,7 @@ public class QueryHelperTest {
     }
 
     private Account saveRandomAccount() {
-        Account account = TestDataGenerator.generateAccount();
+        Account account = generateAccount();
         emUtil.performWithinTx(entityManager -> entityManager.persist(account));
         return account;
     }
@@ -72,7 +94,7 @@ public class QueryHelperTest {
 
     @Test
     public void testQueryHelperThrowsException() {
-        Account account = TestDataGenerator.generateAccount();
+        Account account = generateAccount();
         emUtil.performWithinTx(entityManager -> entityManager.persist(account));
         try {
             queryHelper.readWithinTx(entityManager -> {
