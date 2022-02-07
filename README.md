@@ -10,11 +10,11 @@ It is important to have a different type of activities, which purpose is improvi
 
 ***An exercise** is a predefined task that you continuously implement to improve a certain skill* :muscle:
 ##
-* [Hello persistence.xml](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/hello-persistence-xml)
-* [Hello JPA entity](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/hello-jpa-entity)
-* [Account DAO](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/account-dao)
-* [Query helper](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/query-helper)
-* [Employee profile](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/employee-profile)
-* [Photo comment DAO](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/photo-comment-dao)
-* [Authors & Books](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/author-book)
-* [Company products](https://github.com/bobocode-projects/jpa-hibernate-exercises/tree/master/company-products)
+* [Hello persistence.xml](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/hello-persistence-xml)
+* [Hello JPA entity](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/hello-jpa-entity)
+* [Account DAO](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/account-dao)
+* [Query helper](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/query-helper)
+* [Employee profile](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/employee-profile)
+* [Photo comment DAO](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/photo-comment-dao)
+* [Authors & Books](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/author-book)
+* [Company products](https://github.com/ValeriaPiont/JPA-Hibernate/tree/master/company-products)
