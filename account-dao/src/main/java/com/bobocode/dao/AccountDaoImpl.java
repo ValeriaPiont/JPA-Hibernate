@@ -1,9 +1,13 @@
 package com.bobocode.dao;
 
+import com.bobocode.exception.AccountDaoException;
 import com.bobocode.model.Account;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class AccountDaoImpl implements AccountDao {
     private EntityManagerFactory emf;
@@ -12,34 +16,82 @@ public class AccountDaoImpl implements AccountDao {
         this.emf = emf;
     }
 
-    @Override
+    public void performWithoutReturning(Consumer<EntityManager> operation) {
+        EntityManager entityManager = emf.createEntityManager();
+        entityManager.getTransaction().begin();
+        try {
+            operation.accept(entityManager);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw new AccountDaoException("Error performing JPA operation. Transaction is rolled back", e);
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public Account performWithReturning(Function<EntityManager, Account> operation) {
+        EntityManager entityManager = emf.createEntityManager();
+        entityManager.getTransaction().begin();
+        try {
+            Account account = operation.apply(entityManager);
+            entityManager.getTransaction().commit();
+            return account;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw new AccountDaoException("Error performing JPA operation. Transaction is rolled back", e);
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public List<Account> performWithListReturning(Function<EntityManager, List<Account>> operation) {
+        EntityManager entityManager = emf.createEntityManager();
+        entityManager.getTransaction().begin();
+        try {
+            List<Account> account = operation.apply(entityManager);
+            entityManager.getTransaction().commit();
+            return account;
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw new AccountDaoException("Error performing JPA operation. Transaction is rolled back", e);
+        } finally {
+            entityManager.close();
+        }
+    }
+
     public void save(Account account) {
-        throw new UnsupportedOperationException("I don't wanna work without implementation!"); // todo
+        performWithoutReturning(em -> em.persist(account));
     }
 
     @Override
     public Account findById(Long id) {
-        throw new UnsupportedOperationException("I don't wanna work without implementation!"); // todo
+        return performWithReturning(em -> em.find(Account.class, id));
     }
 
     @Override
     public Account findByEmail(String email) {
-        throw new UnsupportedOperationException("I don't wanna work without implementation!"); // todo
+       return performWithReturning(em -> em.createQuery("select a from Account a where a.email = :email", Account.class)
+                .setParameter("email", email)
+                .getSingleResult());
     }
 
     @Override
     public List<Account> findAll() {
-        throw new UnsupportedOperationException("I don't wanna work without implementation!"); // todo
+        return performWithListReturning(em ->
+                em.createQuery("select a from Account a", Account.class).getResultList());
     }
 
     @Override
     public void update(Account account) {
-        throw new UnsupportedOperationException("I don't wanna work without implementation!"); // todo
+        performWithoutReturning(em -> em.merge(account));
     }
 
     @Override
     public void remove(Account account) {
-        throw new UnsupportedOperationException("I don't wanna work without implementation!"); // todo
+        performWithoutReturning(em -> {
+            em.remove(em.merge(account));// put in pc with merge
+        });
     }
 }
 

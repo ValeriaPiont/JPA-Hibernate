@@ -1,8 +1,14 @@
 package com.bobocode.model;
 
+import com.sun.istack.NotNull;
+import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 /**
  * TODO: you're job is to implement mapping for JPA entity {@link Movie}
@@ -14,12 +20,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Entity
+@Table(name = "movie")
 public class Movie {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "director", nullable = false)
     private String director;
 
+    @Column(name = "duration")
     private Integer durationSeconds;
 }
